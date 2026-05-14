@@ -58,25 +58,43 @@ class TableauAnaltitco:
 
     def __tratamento(self, lista):
         conectivos = {">", "&", "|"}
+        negacao = "~"
 
         for formula in lista:
             if formula == "":
                 raise ErroDeSintaxe(formula)
+
             pilha = 0
             n = len(formula)
 
             for i, c in enumerate(formula):
                 prox = formula[i+1] if i+1 < n else None
-                ant  = formula[i-1] if i-1 >= 0 else None
 
-                if c not in conectivos and c not in "()":
+                if c not in conectivos and c not in "()~":
                     if prox == '(':
                         raise ErroDeSintaxe(formula)
 
+                    if prox == negacao:
+                        raise ErroDeSintaxe(formula)
+
+                if c == ')' and prox == negacao:
+                    raise ErroDeSintaxe(formula)
+
+                if c == negacao and prox == ')':
+                    raise ErroDeSintaxe(formula)
+
+                if c == negacao and prox in conectivos:
+                    raise ErroDeSintaxe(formula)
+
+                if c == negacao and prox is None:
+                    raise ErroDeSintaxe(formula)
+
                 if c == ')':
                     pilha -= 1
+
                     if pilha < 0:
                         raise ErroDeSintaxe(formula)
+
                     if prox and prox not in conectivos and prox not in ["(", ")"]:
                         raise ErroDeSintaxe(formula)
 

@@ -66,7 +66,7 @@ class ParserLogico:
             if formula[0] == "~":
                 return {
                     "type": "not",
-                    "child": self.__estruturar(formula[1])
+                    "child": self.__estruturar(formula[1:])
                 }
 
         if len(formula) == 1:
